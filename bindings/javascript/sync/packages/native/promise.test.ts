@@ -282,6 +282,21 @@ test('simple-db', async () => {
     await expect(async () => await db.pull()).rejects.toThrowError(/sync is disabled as database was opened without sync support/);
 })
 
+test('Statement.run() preserves rowids above Number.MAX_SAFE_INTEGER', async () => {
+    const db = await connect({ path: ':memory:' });
+    try {
+        db.defaultSafeIntegers(true);
+        await db.exec("CREATE TABLE t(id INTEGER PRIMARY KEY, value TEXT)");
+
+        const info = await db.prepare("INSERT INTO t(id, value) VALUES (9007199254740993, 'x')").run();
+
+        expect(info.changes).toBe(1);
+        expect(info.lastInsertRowid).toBe(9007199254740993n);
+    } finally {
+        await db.close();
+    }
+})
+
 test('implicit connect', async ({ server }) => {
     const db = new Database({ path: ':memory:', url: server.dbUrl() });
     const defer = db.prepare("SELECT * FROM not_found");

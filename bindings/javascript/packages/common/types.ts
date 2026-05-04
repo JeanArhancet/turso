@@ -47,7 +47,7 @@ export interface NativeDatabase {
     defaultSafeIntegers(toggle: boolean);
     totalChanges(): number;
     changes(): number;
-    lastInsertRowid(): number;
+    lastInsertRowid(): number | bigint;
     close();
 }
 

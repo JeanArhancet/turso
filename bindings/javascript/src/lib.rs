@@ -507,8 +507,13 @@ impl Database {
     ///
     /// The rowid of the last row inserted.
     #[napi]
-    pub fn last_insert_rowid(&self) -> napi::Result<i64> {
-        Ok(self.conn()?.last_insert_rowid())
+    pub fn last_insert_rowid(&self) -> napi::Result<Either<i64, BigInt>> {
+        let rowid = self.conn()?.last_insert_rowid();
+        if *self.inner()?.default_safe_integers.lock().unwrap() {
+            Ok(Either::B(BigInt::from(rowid)))
+        } else {
+            Ok(Either::A(rowid))
+        }
     }
 
     /// Returns the number of changes made by the last statement.

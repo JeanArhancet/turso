@@ -44,7 +44,7 @@ export class RemoteWriter {
         columns: string[];
         rows: any[];
         rowsAffected: number;
-        lastInsertRowid: number | undefined;
+        lastInsertRowid: number | bigint | undefined;
     }> {
         if (this._inRemoteTxn) {
             return await this.session!.execute(sql, args);

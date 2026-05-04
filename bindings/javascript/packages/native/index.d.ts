@@ -52,7 +52,7 @@ export declare class Database {
    *
    * The rowid of the last row inserted.
    */
-  lastInsertRowid(): number
+  lastInsertRowid(): number | bigint
   /**
    * Returns the number of changes made by the last statement.
    *
